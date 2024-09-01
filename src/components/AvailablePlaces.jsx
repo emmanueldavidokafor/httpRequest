@@ -15,6 +15,10 @@ export default function AvailablePlaces({ onSelectPlace }) {
 			try {
 				const places = await fetchAvailablePlaces();
 
+				if (!navigator.geolocation) {
+					throw new Error('Geolocation is not supported by your browser');
+				}
+
 				navigator.geolocation.getCurrentPosition((position) => {
 					const sortedPlaces = sortPlacesByDistance(
 						places,
@@ -24,6 +28,23 @@ export default function AvailablePlaces({ onSelectPlace }) {
 					setAvailablePlaces(sortedPlaces);
 					setIsFetching(false);
 				});
+
+				// navigator.geolocation.getCurrentPosition(
+				// 	(position) => {
+				// 		const sortedPlaces = sortPlacesByDistance(
+				// 			places,
+				// 			position.coords.latitude,
+				// 			position.coords.longitude
+				// 		);
+				// 		setAvailablePlaces(sortedPlaces);
+				// 		setIsFetching(false);
+				// 	},
+				// 	() => {
+				// 		// Handle user denying location access or error
+				// 		setError({ message: 'Could not retrieve location' });
+				// 		setIsFetching(false);
+				// 	}
+				// );
 			} catch (error) {
 				setError({
 					message:
